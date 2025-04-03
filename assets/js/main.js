@@ -28,21 +28,11 @@ var iUp = (function () {
 })();
 
 function getBingImages(imgUrls) {
-	/**
-	 * 获取Bing壁纸
-	 * 先使用 GitHub Action 每天获取 Bing 壁纸 URL 并更新 images.json 文件
-	 * 然后读取 images.json 文件中的数据
-	 */
-	var indexName = "bing-image-index";
-	var index = sessionStorage.getItem(indexName);
-	var panel = document.querySelector('#panel');
-	if (isNaN(index) || index == 7) index = 0;
-	else index++;
-	var imgUrl = imgUrls[index];
-	var url = "https://www.cn.bing.com" + imgUrl;
-	panel.style.background = "url('" + url + "') center center no-repeat #666";
-	panel.style.backgroundSize = "cover";
-	sessionStorage.setItem(indexName, index);
+    // 直接设置面板背景为指定图片
+    var panel = document.querySelector('#panel');
+    // 修改这一行，使用正确的 url() 语法
+    panel.style.background = "url('assets/img/wallpaper.jpg') center center no-repeat #000";
+    panel.style.backgroundSize = "cover";
 }
 
 function decryptEmail(encoded) {
@@ -51,26 +41,31 @@ function decryptEmail(encoded) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-	// 获取一言数据
-	var xhr = new XMLHttpRequest();
-	xhr.onreadystatechange = function () {
-		if (this.readyState == 4 && this.status == 200) {
-			var res = JSON.parse(this.responseText);
-			document.getElementById('description').innerHTML = res.hitokoto + "<br/> -「<strong>" + res.from + "</strong>」";
-		}
-	};
-	xhr.open("GET", "https://v1.hitokoto.cn", true);
-	xhr.send();
+    // 定义一个开关变量，true 表示开启获取一言数据功能，false 表示关闭
+    var getHitokotoEnabled = false; 
 
-	var iUpElements = document.querySelectorAll(".iUp");
-	iUpElements.forEach(function (element) {
-		iUp.up(element);
-	});
+    if (getHitokotoEnabled) {
+        // 获取一言数据
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                var res = JSON.parse(this.responseText);
+                document.getElementById('description').innerHTML = res.hitokoto + "<br/> -「<strong>" + res.from + "</strong>」";
+            }
+        };
+        xhr.open("GET", "https://v1.hitokoto.cn", true);
+        xhr.send();
+    }
 
-	var avatarElement = document.querySelector(".js-avatar");
-	avatarElement.addEventListener('load', function () {
-		avatarElement.classList.add("show");
-	});
+    var iUpElements = document.querySelectorAll(".iUp");
+    iUpElements.forEach(function (element) {
+        iUp.up(element);
+    });
+
+    var avatarElement = document.querySelector(".js-avatar");
+    avatarElement.addEventListener('load', function () {
+        avatarElement.classList.add("show");
+    });
 });
 
 var btnMobileMenu = document.querySelector('.btn-mobile-menu__icon');
